@@ -608,46 +608,46 @@ function showToast(msg, type='', duration=3500) {
 
 // ─── Build AHP reciprocal matrix & flat row for Sheets ───
 function buildMatrixRow() {
-  // Returns: timestamp, then for each pair i<j: "Fi_vs_Fj = X"
-  // Also returns the full 8x8 matrix as JSON for analysis
+
   const matrix = Array.from({length:n}, () => Array(n).fill(1));
-  const pairs   = [];
+  const pairs  = [];
 
   for (let i=0;i<n;i++) {
     for (let j=i+1;j<n;j++) {
-      const el = document.querySelector(`input[name="p_${i}_${j}"]:checked`);
+
+      const selectedInput = document.querySelector(`input[name="p_${i}_${j}"]:checked`);
       let val = null;
-      if (el) {
-        const raw = parseFloat(el.value);
-        const selectedInput = document.querySelector(`input[name="p_${i}_${j}"]:checked`);
-const colIndex = parseInt(selectedInput.id.split("_").pop()); // last number
 
-let val;
+      if (selectedInput) {
 
-if (colIndex < 4) {
-    // Left side
-    val = -COL_DISPLAY[colIndex];
-    matrix[i][j] = COL_DISPLAY[colIndex];
-    matrix[j][i] = +(1 / COL_DISPLAY[colIndex]).toFixed(4);
-} 
-else if (colIndex === 4) {
-    val = 1;
-    matrix[i][j] = 1;
-    matrix[j][i] = 1;
-} 
-else {
-    // Right side
-    val = COL_DISPLAY[colIndex];
-    matrix[j][i] = COL_DISPLAY[colIndex];
-    matrix[i][j] = +(1 / COL_DISPLAY[colIndex]).toFixed(4);
-}
+        const colIndex = parseInt(selectedInput.id.split("_").pop());
+
+        if (colIndex < 4) {
+          // LEFT selected
+          val = -COL_DISPLAY[colIndex];
+          matrix[i][j] = COL_DISPLAY[colIndex];
+          matrix[j][i] = +(1 / COL_DISPLAY[colIndex]).toFixed(4);
+        } 
+        else if (colIndex === 4) {
+          // Equal
+          val = 1;
+          matrix[i][j] = 1;
+          matrix[j][i] = 1;
+        } 
+        else {
+          // RIGHT selected
+          val = COL_DISPLAY[colIndex];
+          matrix[j][i] = COL_DISPLAY[colIndex];
+          matrix[i][j] = +(1 / COL_DISPLAY[colIndex]).toFixed(4);
+        }
       }
-      pairs.push(`${factors[i].id}_vs_${factors[j].id}:${val !== null ? val : 'NA'}`);
+
+      pairs.push(val);  // push numeric directly
     }
   }
+
   return { matrix, pairs };
 }
-
 // ─── Submit ───
 document.getElementById('ahpForm').addEventListener('submit', async function(e) {
   e.preventDefault();
