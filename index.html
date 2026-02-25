@@ -619,18 +619,27 @@ function buildMatrixRow() {
       let val = null;
       if (el) {
         const raw = parseFloat(el.value);
-        if (raw < 0) {
-    matrix[i][j] = Math.abs(raw);
-    matrix[j][i] = +(1 / Math.abs(raw)).toFixed(4);
-    val = raw; // keep negative for LEFT
-} else if (raw === 1) {
+        const selectedInput = document.querySelector(`input[name="p_${i}_${j}"]:checked`);
+const colIndex = parseInt(selectedInput.id.split("_").pop()); // last number
+
+let val;
+
+if (colIndex < 4) {
+    // Left side
+    val = -COL_DISPLAY[colIndex];
+    matrix[i][j] = COL_DISPLAY[colIndex];
+    matrix[j][i] = +(1 / COL_DISPLAY[colIndex]).toFixed(4);
+} 
+else if (colIndex === 4) {
+    val = 1;
     matrix[i][j] = 1;
     matrix[j][i] = 1;
-    val = 1;
-} else {
-    matrix[j][i] = raw;
-    matrix[i][j] = +(1 / raw).toFixed(4);
-    val = raw; // positive for RIGHT
+} 
+else {
+    // Right side
+    val = COL_DISPLAY[colIndex];
+    matrix[j][i] = COL_DISPLAY[colIndex];
+    matrix[i][j] = +(1 / COL_DISPLAY[colIndex]).toFixed(4);
 }
       }
       pairs.push(`${factors[i].id}_vs_${factors[j].id}:${val !== null ? val : 'NA'}`);
