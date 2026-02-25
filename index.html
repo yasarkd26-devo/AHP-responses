@@ -620,20 +620,18 @@ function buildMatrixRow() {
       if (el) {
         const raw = parseFloat(el.value);
         if (raw < 0) {
-          // A more important
-          matrix[i][j] = Math.abs(raw);
-          matrix[j][i] = +(1 / Math.abs(raw)).toFixed(4);
-          val = Math.abs(raw);              // from A's perspective
-        } else if (raw === 1) {
-          matrix[i][j] = 1;
-          matrix[j][i] = 1;
-          val = 1;
-        } else {
-          // B more important
-          matrix[j][i] = raw;
-          matrix[i][j] = +(1 / raw).toFixed(4);
-          val = raw;                        // from B's perspective (reciprocal already set)
-        }
+    matrix[i][j] = Math.abs(raw);
+    matrix[j][i] = +(1 / Math.abs(raw)).toFixed(4);
+    val = raw; // keep negative for LEFT
+} else if (raw === 1) {
+    matrix[i][j] = 1;
+    matrix[j][i] = 1;
+    val = 1;
+} else {
+    matrix[j][i] = raw;
+    matrix[i][j] = +(1 / raw).toFixed(4);
+    val = raw; // positive for RIGHT
+}
       }
       pairs.push(`${factors[i].id}_vs_${factors[j].id}:${val !== null ? val : 'NA'}`);
     }
